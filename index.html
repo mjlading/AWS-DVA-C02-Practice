@@ -9,15 +9,14 @@
   <script>
     (() => {
       try {
-        const preference = localStorage.getItem("dva-c02-theme") || "system";
-        const dark = preference === "dark" ||
-          (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        const saved = localStorage.getItem("dva-c02-theme");
+        const preference = ["light", "dark"].includes(saved) ? saved : null;
+        const dark = preference ? preference === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
         document.documentElement.dataset.theme = dark ? "dark" : "light";
-        document.documentElement.dataset.themePreference = preference;
         document.documentElement.style.colorScheme = dark ? "dark" : "light";
       } catch {
-        document.documentElement.dataset.theme = "light";
-        document.documentElement.dataset.themePreference = "system";
+        const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
       }
     })();
   </script>
@@ -36,13 +35,9 @@
       <div class="header-actions">
         <div class="header-status">
           <span class="status-dot" aria-hidden="true"></span>
-          Original practice questions
+          130 original practice questions
         </div>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Theme: System" title="Theme: System">
-          <svg class="theme-icon theme-icon-system" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3.5" y="4.5" width="17" height="12" rx="2"></rect>
-            <path d="M8 20h8M12 16.5V20"></path>
-          </svg>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">
           <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="3.5"></circle>
             <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"></path>
@@ -61,7 +56,7 @@
             <p class="eyebrow">AWS Certified Developer - Associate</p>
             <h1>Learn by taking the exam.</h1>
             <p class="hero-lead">
-              Start with realistic scenarios, expose the gaps, and learn each AWS concept exactly when you need it.
+              Warm up on the fundamentals, then take an exam-difficulty mock built to the DVA-C02 task statements. Expose the gaps and learn each AWS concept exactly when you need it.
             </p>
             <div class="exam-facts" aria-label="Exam facts">
               <div>
@@ -100,6 +95,38 @@
             <span class="keyboard-hint">Progress saves automatically</span>
           </div>
 
+          <p class="picker-label">Question bank</p>
+          <div class="mode-grid tier-grid" role="radiogroup" aria-label="Question bank">
+            <label class="mode-card">
+              <input type="radio" name="tier" value="warmup">
+              <span class="mode-radio" aria-hidden="true"></span>
+              <span class="mode-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3M5.6 18.4l2.1-2.1M12 21v-3M18.4 18.4l-2.1-2.1M21 12h-3M18.4 5.6l-2.1 2.1"></path>
+                  <circle cx="12" cy="12" r="3.5"></circle>
+                </svg>
+              </span>
+              <strong>Warmup</strong>
+              <span>65 fundamentals questions with clear-cut distractors. Confirms you know what each service is for.</span>
+              <small>Easier than the real exam</small>
+            </label>
+
+            <label class="mode-card is-selected">
+              <input type="radio" name="tier" value="exam" checked>
+              <span class="mode-radio" aria-hidden="true"></span>
+              <span class="mode-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M6 3h9l4 4v14H6z"></path>
+                  <path d="M14 3v5h5M9 13l2 2 4-4"></path>
+                </svg>
+              </span>
+              <strong>The real deal</strong>
+              <span>65 exam-difficulty scenarios: capacity math, error codes, plausible distractors, and service gotchas mapped to every DVA-C02 task statement.</span>
+              <small>Calibrated to the real exam</small>
+            </label>
+          </div>
+
+          <p class="picker-label">Session type</p>
           <div class="mode-grid">
             <label class="mode-card is-selected">
               <input type="radio" name="mode" value="timed" checked>
@@ -168,6 +195,8 @@
         <p class="disclaimer">
           This independent study tool contains original questions and is not affiliated with or endorsed by Amazon Web Services.
           Readiness percentages are coaching targets, not an AWS scaled score.
+          Each bank is a fixed set of 65 questions, so a repeat attempt on the same bank re-serves questions you have already seen.
+          AWS has announced that DVA-C02 can be taken until December 1, 2026, with DVA-C03 registration opening October 27, 2026.
         </p>
       </section>
 
@@ -367,6 +396,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="questions.js"></script>
+  <script src="questions-exam.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

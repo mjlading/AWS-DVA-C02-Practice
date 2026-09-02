@@ -11,10 +11,20 @@
     "Troubleshooting and Optimization": 18
   };
 
-  const questions = Array.isArray(window.QUESTIONS) ? window.QUESTIONS : [];
+  const BANKS = {
+    warmup: {
+      label: "Warmup",
+      questions: Array.isArray(window.QUESTIONS) ? window.QUESTIONS : []
+    },
+    exam: {
+      label: "The real deal",
+      questions: Array.isArray(window.EXAM_QUESTIONS) ? window.EXAM_QUESTIONS : []
+    }
+  };
+  let questions = BANKS.exam.questions;
   let timerHandle = null;
   let toastHandle = null;
-  let themePreference = "system";
+  let themePreference = null;
   let state = createEmptyState();
   let activeReviewFilter = "all";
 
@@ -23,6 +33,7 @@
   function createEmptyState() {
     return {
       version: 1,
+      bank: "exam",
       mode: "timed",
       domain: "all",
       questionIds: [],
@@ -113,6 +124,7 @@
     const saved = readSavedState();
     if (saved) {
       state = saved;
+      setActiveBank(state.bank);
       if (state.submitted) {
         renderResults();
       } else {
@@ -120,18 +132,29 @@
       }
     }
 
-    if (questions.length !== 65) {
-      showToast(`Question bank is still loading: ${questions.length} of 65 questions available.`);
+    const incomplete = Object.values(BANKS).find((bank) => bank.questions.length !== 65);
+    if (incomplete) {
+      showToast(`${incomplete.label} bank is incomplete: ${incomplete.questions.length} of 65 questions available.`);
       elements["start-exam"].disabled = true;
     }
   }
 
+  function selectedTier() {
+    return document.querySelector('input[name="tier"]:checked')?.value || "exam";
+  }
+
+  function setActiveBank(tier) {
+    const bank = BANKS[tier] ? tier : "warmup";
+    questions = BANKS[bank].questions;
+    return bank;
+  }
+
   function bindEvents() {
-    document.querySelectorAll('input[name="mode"]').forEach((input) => {
+    document.querySelectorAll('input[name="mode"], input[name="tier"]').forEach((input) => {
       input.addEventListener("change", updateModeSelection);
     });
 
-    elements["theme-toggle"].addEventListener("click", cycleThemePreference);
+    elements["theme-toggle"].addEventListener("click", toggleTheme);
     elements["domain-select"].addEventListener("change", updateStartSummary);
     elements["start-exam"].addEventListener("click", startNewAttempt);
     elements["resume-attempt"].addEventListener("click", resumeAttempt);
@@ -170,16 +193,15 @@
     themePreference = readThemePreference();
     applyTheme(themePreference);
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-      if (themePreference === "system") {
-        applyTheme("system");
+      if (themePreference === null) {
+        applyTheme(null);
       }
     });
   }
 
-  function cycleThemePreference() {
-    const preferences = ["system", "light", "dark"];
-    const nextIndex = (preferences.indexOf(themePreference) + 1) % preferences.length;
-    themePreference = preferences[nextIndex];
+  function toggleTheme() {
+    const currentTheme = document.documentElement.dataset.theme;
+    themePreference = currentTheme === "dark" ? "light" : "dark";
     try {
       localStorage.setItem(THEME_KEY, themePreference);
     } catch {
@@ -192,21 +214,19 @@
   function readThemePreference() {
     try {
       const preference = localStorage.getItem(THEME_KEY);
-      return ["system", "light", "dark"].includes(preference) ? preference : "system";
+      return ["light", "dark"].includes(preference) ? preference : null;
     } catch {
-      return "system";
+      return null;
     }
   }
 
   function applyTheme(preference) {
-    const dark = preference === "dark" ||
-      (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const dark = preference ? preference === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     const theme = dark ? "dark" : "light";
     document.documentElement.dataset.theme = theme;
-    document.documentElement.dataset.themePreference = preference;
     document.documentElement.style.colorScheme = theme;
-    const next = ({ system: "light", light: "dark", dark: "system" })[preference];
-    const label = `Theme: ${themeLabel(preference)}. Click to switch to ${themeLabel(next)}.`;
+    const next = dark ? "light" : "dark";
+    const label = `Switch to ${themeLabel(next)} theme. Current theme: ${themeLabel(theme)}.`;
     elements["theme-toggle"].setAttribute("aria-label", label);
     elements["theme-toggle"].title = label;
   }
@@ -227,23 +247,25 @@
   function updateStartSummary() {
     const selected = document.querySelector('input[name="mode"]:checked')?.value || "timed";
     const domain = elements["domain-select"].value;
+    const bank = BANKS[selectedTier()];
 
     if (selected === "timed") {
-      elements["start-summary"].textContent = "Full diagnostic exam";
+      elements["start-summary"].textContent = `${bank.label}: full diagnostic exam`;
       elements["start-description"].textContent = "Explanations remain hidden until you submit.";
       elements["start-exam"].firstChild.textContent = "Start timed exam ";
       return;
     }
 
     const count = domain === "all"
-      ? questions.length
-      : questions.filter((question) => question.domain === domain).length;
-    elements["start-summary"].textContent = domain === "all" ? "All-domain learning session" : domain;
+      ? bank.questions.length
+      : bank.questions.filter((question) => question.domain === domain).length;
+    elements["start-summary"].textContent = `${bank.label}: ${domain === "all" ? "all-domain learning session" : domain}`;
     elements["start-description"].textContent = `${count} questions with immediate answer explanations.`;
     elements["start-exam"].firstChild.textContent = "Start learning mode ";
   }
 
   function startNewAttempt() {
+    const bank = setActiveBank(selectedTier());
     if (questions.length !== 65) {
       showToast("The complete question bank is not available yet.");
       return;
@@ -256,6 +278,7 @@
       : questions.filter((question) => question.domain === domain);
 
     state = createEmptyState();
+    state.bank = bank;
     state.mode = mode;
     state.domain = domain;
     state.questionIds = shuffle(selectedQuestions.map((question) => question.id));
@@ -274,6 +297,7 @@
     }
 
     state = saved;
+    setActiveBank(state.bank);
     if (state.mode === "timed" && Date.now() >= state.endsAt) {
       finalizeAttempt(true);
       return;
@@ -284,7 +308,7 @@
   function showExam() {
     showView("exam-view");
     elements["mode-pill"].textContent = state.mode === "timed" ? "Timed exam" : "Learning mode";
-    elements["exam-domain-label"].textContent = state.domain === "all" ? "All domains" : state.domain;
+    elements["exam-domain-label"].textContent = `${BANKS[state.bank].label} | ${state.domain === "all" ? "All domains" : state.domain}`;
     elements["timer"].classList.toggle("is-hidden", state.mode !== "timed");
     elements["check-answer"].classList.toggle("is-hidden", state.mode !== "practice");
     elements["submit-exam"].textContent = state.mode === "timed" ? "Submit exam" : "Finish session";
@@ -552,8 +576,11 @@
     elements["time-used"].textContent = formatDuration(result.timeUsedSeconds);
 
     const readiness = readinessFor(result.percent);
+    elements["results-title"].textContent = `Your ${BANKS[state.bank].label.toLowerCase()} result`;
     elements["readiness-title"].textContent = readiness.title;
-    elements["readiness-copy"].textContent = readiness.copy;
+    elements["readiness-copy"].textContent = state.bank === "warmup"
+      ? `${readiness.copy} The warmup bank is easier than the real exam, so treat this score as a floor and confirm it on The real deal.`
+      : readiness.copy;
     elements["results-message"].textContent = readiness.message;
     elements["readiness-banner"].dataset.level = readiness.level;
 
@@ -781,13 +808,14 @@
       return;
     }
 
+    const savedBank = BANKS[saved.bank] ? saved.bank : "warmup";
     const savedQuestions = saved.questionIds
-      .map((id) => questions.find((question) => question.id === id))
+      .map((id) => BANKS[savedBank].questions.find((question) => question.id === id))
       .filter(Boolean);
     const answered = savedQuestions.filter((question) =>
       hasCompleteAnswer(question, saved.answers[question.id] || [])
     ).length;
-    elements["resume-title"].textContent = saved.mode === "timed" ? "Timed DVA-C02 exam" : "Learning session";
+    elements["resume-title"].textContent = `${BANKS[savedBank].label}: ${saved.mode === "timed" ? "timed exam" : "learning session"}`;
     elements["resume-details"].textContent = `${answered} of ${savedQuestions.length} answered`;
   }
 
@@ -854,11 +882,12 @@
       if (!parsed || parsed.version !== 1 || !Array.isArray(parsed.questionIds)) {
         return null;
       }
-      const validIds = new Set(questions.map((question) => question.id));
+      const bank = BANKS[parsed.bank] ? parsed.bank : "warmup";
+      const validIds = new Set(BANKS[bank].questions.map((question) => question.id));
       if (!parsed.questionIds.length || parsed.questionIds.some((id) => !validIds.has(id))) {
         return null;
       }
-      return { ...createEmptyState(), ...parsed };
+      return { ...createEmptyState(), ...parsed, bank };
     } catch {
       return null;
     }

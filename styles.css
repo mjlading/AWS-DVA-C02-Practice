@@ -199,9 +199,8 @@ a {
   stroke-width: 1.7;
 }
 
-:root[data-theme-preference="system"] .theme-icon-system,
-:root[data-theme-preference="light"] .theme-icon-light,
-:root[data-theme-preference="dark"] .theme-icon-dark {
+:root[data-theme="dark"] .theme-icon-light,
+:root[data-theme="light"] .theme-icon-dark {
   display: block;
 }
 
@@ -390,11 +389,28 @@ main {
   font-size: 12px;
 }
 
+.picker-label {
+  margin: 28px 0 0;
+  color: var(--soft-muted);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.picker-label + .mode-grid {
+  margin-top: 12px;
+}
+
 .mode-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   margin-top: 28px;
+}
+
+.tier-grid .mode-card {
+  min-height: 150px;
 }
 
 .mode-card {
