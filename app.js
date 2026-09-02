@@ -576,7 +576,7 @@
     elements["time-used"].textContent = formatDuration(result.timeUsedSeconds);
 
     const readiness = readinessFor(result.percent);
-    elements["results-title"].textContent = `Your ${BANKS[state.bank].label.toLowerCase()} result`;
+    elements["results-title"].textContent = `${BANKS[state.bank].label} result`;
     elements["readiness-title"].textContent = readiness.title;
     elements["readiness-copy"].textContent = state.bank === "warmup"
       ? `${readiness.copy} The warmup bank is easier than the real exam, so treat this score as a floor and confirm it on The real deal.`
