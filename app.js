@@ -14,6 +14,7 @@
   const questions = Array.isArray(window.QUESTIONS) ? window.QUESTIONS : [];
   let timerHandle = null;
   let toastHandle = null;
+  let themePreference = "system";
   let state = createEmptyState();
   let activeReviewFilter = "all";
 
@@ -43,7 +44,7 @@
       "exam-view",
       "results-view",
       "brand-home",
-      "theme-select",
+      "theme-toggle",
       "domain-picker",
       "domain-select",
       "resume-card",
@@ -130,7 +131,7 @@
       input.addEventListener("change", updateModeSelection);
     });
 
-    elements["theme-select"].addEventListener("change", updateThemePreference);
+    elements["theme-toggle"].addEventListener("click", cycleThemePreference);
     elements["domain-select"].addEventListener("change", updateStartSummary);
     elements["start-exam"].addEventListener("click", startNewAttempt);
     elements["resume-attempt"].addEventListener("click", resumeAttempt);
@@ -166,24 +167,26 @@
   }
 
   function initThemeControl() {
-    const preference = readThemePreference();
-    elements["theme-select"].value = preference;
-    applyTheme(preference);
+    themePreference = readThemePreference();
+    applyTheme(themePreference);
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-      if (elements["theme-select"].value === "system") {
+      if (themePreference === "system") {
         applyTheme("system");
       }
     });
   }
 
-  function updateThemePreference() {
-    const preference = elements["theme-select"].value;
+  function cycleThemePreference() {
+    const preferences = ["system", "light", "dark"];
+    const nextIndex = (preferences.indexOf(themePreference) + 1) % preferences.length;
+    themePreference = preferences[nextIndex];
     try {
-      localStorage.setItem(THEME_KEY, preference);
+      localStorage.setItem(THEME_KEY, themePreference);
     } catch {
       showToast("The theme preference could not be saved in this browser.");
     }
-    applyTheme(preference);
+    applyTheme(themePreference);
+    showToast(`Theme: ${themeLabel(themePreference)}`);
   }
 
   function readThemePreference() {
@@ -200,7 +203,16 @@
       (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
     const theme = dark ? "dark" : "light";
     document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.themePreference = preference;
     document.documentElement.style.colorScheme = theme;
+    const next = ({ system: "light", light: "dark", dark: "system" })[preference];
+    const label = `Theme: ${themeLabel(preference)}. Click to switch to ${themeLabel(next)}.`;
+    elements["theme-toggle"].setAttribute("aria-label", label);
+    elements["theme-toggle"].title = label;
+  }
+
+  function themeLabel(preference) {
+    return preference.charAt(0).toUpperCase() + preference.slice(1);
   }
 
   function updateModeSelection() {

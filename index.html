@@ -13,9 +13,11 @@
         const dark = preference === "dark" ||
           (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
         document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.dataset.themePreference = preference;
         document.documentElement.style.colorScheme = dark ? "dark" : "light";
       } catch {
         document.documentElement.dataset.theme = "light";
+        document.documentElement.dataset.themePreference = "system";
       }
     })();
   </script>
@@ -36,14 +38,19 @@
           <span class="status-dot" aria-hidden="true"></span>
           Original practice questions
         </div>
-        <label class="theme-control">
-          <span>Theme</span>
-          <select id="theme-select" aria-label="Color theme">
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Theme: System" title="Theme: System">
+          <svg class="theme-icon theme-icon-system" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.5" y="4.5" width="17" height="12" rx="2"></rect>
+            <path d="M8 20h8M12 16.5V20"></path>
+          </svg>
+          <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.5"></circle>
+            <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"></path>
+          </svg>
+          <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"></path>
+          </svg>
+        </button>
       </div>
     </header>
 

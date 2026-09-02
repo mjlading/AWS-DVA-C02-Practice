@@ -161,27 +161,48 @@ a {
   align-items: center;
 }
 
-.theme-control {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: #aeb8c6;
-  font-size: 11px;
-}
-
-.theme-control select {
-  min-height: 34px;
-  padding: 0 28px 0 10px;
-  color: #e6ebf2;
+.theme-toggle {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  place-items: center;
+  cursor: pointer;
+  color: #d5dce6;
   background: #22344b;
   border: 1px solid #40516a;
-  border-radius: 7px;
+  border-radius: 10px;
   outline: none;
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
-.theme-control select:focus {
+.theme-toggle:hover {
+  color: var(--orange);
+  background: #2a3d56;
+  border-color: #60718a;
+  transform: translateY(-1px);
+}
+
+.theme-toggle:focus-visible {
   border-color: var(--orange);
   box-shadow: 0 0 0 3px rgb(255 153 0 / 16%);
+}
+
+.theme-icon {
+  display: none;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+:root[data-theme-preference="system"] .theme-icon-system,
+:root[data-theme-preference="light"] .theme-icon-light,
+:root[data-theme-preference="dark"] .theme-icon-dark {
+  display: block;
 }
 
 .status-dot {
@@ -1850,10 +1871,6 @@ dialog p {
   }
 
   .header-status {
-    display: none;
-  }
-
-  .theme-control > span {
     display: none;
   }
 
