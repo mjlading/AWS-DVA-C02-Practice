@@ -950,7 +950,7 @@ main {
   max-width: 880px;
   margin: 28px 0 10px;
   color: var(--navy);
-  font-size: clamp(17px, 1.8vw, 21px);
+  font-size: clamp(15px, 1.5vw, 18px);
   font-weight: 680;
   letter-spacing: -0.022em;
   line-height: 1.48;
