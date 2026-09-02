@@ -3,16 +3,16 @@ window.QUESTIONS = [
     id: 1,
     domain: "Development with AWS Services",
     type: "single",
-    prompt: "A team notices that a Lambda function written in Node.js creates a new Amazon RDS Proxy client and downloads the same reference data on every invocation. The function has bursty traffic and must reduce average latency with minimal code changes. Which approach should the developer take?",
+    prompt: "A team notices that a Lambda function written in Node.js opens a new database connection through Amazon RDS Proxy and downloads the same reference data on every invocation. The function has bursty traffic and must reduce average latency with minimal code changes. Which approach should the developer take?",
     selectCount: 1,
     options: [
-      { id: "A", text: "Move the client initialization and reference-data load outside the handler so warm execution environments can reuse them." },
+      { id: "A", text: "Move the connection setup and reference-data load outside the handler so warm execution environments can reuse them." },
       { id: "B", text: "Increase the function timeout so initialization has more time to finish." },
       { id: "C", text: "Set reserved concurrency to 1 so the same environment is always reused." },
       { id: "D", text: "Invoke the function asynchronously so callers do not wait for initialization." }
     ],
     answers: ["A"],
-    explanation: "Initializing reusable clients and static data outside the handler lets Lambda reuse them in warm environments and reduces repeated setup work. A larger timeout does not make calls faster, reserved concurrency does not guarantee a single warm environment, and asynchronous invocation only hides latency from callers.",
+    explanation: "Initializing reusable connections, SDK clients, and static data outside the handler lets Lambda reuse them in warm environments and reduces repeated setup work. A larger timeout does not make calls faster, reserved concurrency does not guarantee a single warm environment, and asynchronous invocation only hides latency from callers.",
     reference: "https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html"
   },
   {
@@ -38,14 +38,14 @@ window.QUESTIONS = [
     prompt: "A Lambda function consumes SQS messages and writes to a legacy database that supports only 40 simultaneous connections. The queue can absorb bursts, but the database must be protected from overload. What should the developer configure?",
     selectCount: 1,
     options: [
-      { id: "A", text: "Provisioned Concurrency of 40" },
-      { id: "B", text: "Reserved Concurrency of 40" },
-      { id: "C", text: "A queue retention period of 40 minutes" },
-      { id: "D", text: "A batch window of 40 seconds" }
+      { id: "A", text: "Provisioned Concurrency of 40 on the function" },
+      { id: "B", text: "Reserved Concurrency of 40 on the function" },
+      { id: "C", text: "Maximum concurrency of 40 on the SQS event source mapping" },
+      { id: "D", text: "A batch window of 40 seconds on the SQS event source mapping" }
     ],
-    answers: ["B"],
-    explanation: "Reserved Concurrency caps the function's maximum concurrent executions and protects the downstream database. Provisioned Concurrency only pre-initializes environments, while queue retention and batch window settings do not directly limit database connection pressure.",
-    reference: "https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html"
+    answers: ["C"],
+    explanation: "Maximum concurrency on the SQS event source mapping is the setting AWS recommends for capping how many concurrent invocations one queue can drive, and it does not produce throttling errors or take capacity away from other functions. Reserved Concurrency of 40 also caps the function, but Lambda may still poll faster than that limit, causing throttled invocations and messages being returned to the queue, which is why AWS steers SQS workloads toward maximum concurrency. Provisioned Concurrency only pre-initializes environments, and a batch window controls how long the poller waits to fill a batch.",
+    reference: "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-scaling.html"
   },
   {
     id: 4,
@@ -186,11 +186,11 @@ window.QUESTIONS = [
     options: [
       { id: "A", text: "Local secondary index" },
       { id: "B", text: "Global secondary index" },
-      { id: "C", text: "DynamoDB Streams index" },
-      { id: "D", text: "Time to Live index" }
+      { id: "C", text: "A composite primary key of Status and CreatedAt applied with UpdateTable" },
+      { id: "D", text: "DynamoDB Streams with a Lambda function that filters records by Status" }
     ],
     answers: ["B"],
-    explanation: "A GSI can be added after table creation and can use a different partition key for the new access pattern. An LSI must be defined when the table is created and shares the base table partition key.",
+    explanation: "A GSI can be added after table creation and can use a different partition key for the new access pattern. An LSI must be defined when the table is created and shares the base table partition key. A table's primary key cannot be changed after creation, and Streams delivers change records rather than serving queries.",
     reference: "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html"
   },
   {
@@ -513,11 +513,11 @@ window.QUESTIONS = [
       { id: "A", text: "A key policy for the durable permissions model" },
       { id: "B", text: "A grant for temporary delegated use" },
       { id: "C", text: "A bucket policy on the encrypted S3 object" },
-      { id: "D", text: "An IAM access key for the KMS key" },
-      { id: "E", text: "A security group that allows outbound access to KMS" }
+      { id: "D", text: "A KMS key alias that names the service as an allowed user" },
+      { id: "E", text: "A VPC endpoint policy that allows the service to reach KMS" }
     ],
     answers: ["A", "B"],
-    explanation: "Key policies are the primary resource-based permissions model for KMS keys, while grants are designed for scoped, temporary delegated use. Bucket policies and security groups do not define KMS key permissions, and KMS keys do not use access keys.",
+    explanation: "Key policies are the primary resource-based permissions model for KMS keys, while grants are designed for scoped, temporary delegated use that can be retired without editing the key policy. Bucket policies do not define KMS key permissions, aliases are only friendly names and grant nothing, and a VPC endpoint policy controls network reachability rather than key usage rights.",
     reference: "https://docs.aws.amazon.com/kms/latest/developerguide/grants.html"
   },
   {
@@ -811,7 +811,7 @@ window.QUESTIONS = [
       { id: "E", text: "Outputs that reference the bucket name." }
     ],
     answers: ["A", "B"],
-    explanation: "DependsOn enforces creation order, and DeletionPolicy: Retain preserves the bucket and its contents when the stack is deleted. Metadata and Outputs are informational, while UpdateReplacePolicy: Delete does the opposite of the retention requirement.",
+    explanation: "DependsOn enforces creation order, and DeletionPolicy: Retain preserves the bucket and its contents when the stack is deleted. Without Retain, stack deletion would not silently lose the documents but would fail instead, because CloudFormation cannot delete a bucket that still contains objects. Metadata and Outputs are informational, while UpdateReplacePolicy: Delete does the opposite of the retention requirement.",
     reference: "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html"
   },
   {
