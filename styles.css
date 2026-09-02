@@ -951,7 +951,7 @@ main {
   margin: 28px 0 10px;
   color: var(--navy);
   font-size: clamp(15px, 1.5vw, 18px);
-  font-weight: 680;
+  font-weight: 450;
   letter-spacing: -0.022em;
   line-height: 1.48;
 }
