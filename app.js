@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "dva-c02-practice-lab-v1";
+  const THEME_KEY = "dva-c02-theme";
   const EXAM_SECONDS = 130 * 60;
   const DOMAIN_WEIGHTS = {
     "Development with AWS Services": 32,
@@ -42,6 +43,7 @@
       "exam-view",
       "results-view",
       "brand-home",
+      "theme-select",
       "domain-picker",
       "domain-select",
       "resume-card",
@@ -104,6 +106,7 @@
   function init() {
     cacheElements();
     bindEvents();
+    initThemeControl();
     updateModeSelection();
 
     const saved = readSavedState();
@@ -127,6 +130,7 @@
       input.addEventListener("change", updateModeSelection);
     });
 
+    elements["theme-select"].addEventListener("change", updateThemePreference);
     elements["domain-select"].addEventListener("change", updateStartSummary);
     elements["start-exam"].addEventListener("click", startNewAttempt);
     elements["resume-attempt"].addEventListener("click", resumeAttempt);
@@ -159,6 +163,44 @@
     });
 
     document.addEventListener("keydown", handleKeyboardNavigation);
+  }
+
+  function initThemeControl() {
+    const preference = readThemePreference();
+    elements["theme-select"].value = preference;
+    applyTheme(preference);
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      if (elements["theme-select"].value === "system") {
+        applyTheme("system");
+      }
+    });
+  }
+
+  function updateThemePreference() {
+    const preference = elements["theme-select"].value;
+    try {
+      localStorage.setItem(THEME_KEY, preference);
+    } catch {
+      showToast("The theme preference could not be saved in this browser.");
+    }
+    applyTheme(preference);
+  }
+
+  function readThemePreference() {
+    try {
+      const preference = localStorage.getItem(THEME_KEY);
+      return ["system", "light", "dark"].includes(preference) ? preference : "system";
+    } catch {
+      return "system";
+    }
+  }
+
+  function applyTheme(preference) {
+    const dark = preference === "dark" ||
+      (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const theme = dark ? "dark" : "light";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
   }
 
   function updateModeSelection() {

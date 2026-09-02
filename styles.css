@@ -155,6 +155,35 @@ a {
   font-size: 12px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.theme-control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #aeb8c6;
+  font-size: 11px;
+}
+
+.theme-control select {
+  min-height: 34px;
+  padding: 0 28px 0 10px;
+  color: #e6ebf2;
+  background: #22344b;
+  border: 1px solid #40516a;
+  border-radius: 7px;
+  outline: none;
+}
+
+.theme-control select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgb(255 153 0 / 16%);
+}
+
 .status-dot {
   width: 7px;
   height: 7px;
@@ -1554,6 +1583,227 @@ dialog p {
   transform: translateY(0);
 }
 
+:root[data-theme="dark"] {
+  --ink: #e8edf5;
+  --muted: #aeb8c7;
+  --soft-muted: #8390a3;
+  --border: #344054;
+  --surface: #172235;
+  --surface-soft: #111a29;
+  --page: #0b1220;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 28%);
+  --shadow-md: 0 12px 28px rgb(0 0 0 / 30%);
+  --shadow-lg: 0 24px 64px rgb(0 0 0 / 38%);
+}
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 90% 8%, rgb(255 153 0 / 9%), transparent 22rem),
+    radial-gradient(circle at 8% 32%, rgb(37 99 235 / 8%), transparent 26rem),
+    var(--page);
+}
+
+:root[data-theme="dark"] .hero-copy h1,
+:root[data-theme="dark"] .results-hero h1,
+:root[data-theme="dark"] .exam-facts strong,
+:root[data-theme="dark"] .section-heading h2,
+:root[data-theme="dark"] .domain-results h2,
+:root[data-theme="dark"] .review-header h2,
+:root[data-theme="dark"] .mode-card strong,
+:root[data-theme="dark"] .start-row strong,
+:root[data-theme="dark"] .navigator-heading,
+:root[data-theme="dark"] .question-card h2,
+:root[data-theme="dark"] .score-ring strong,
+:root[data-theme="dark"] .result-stat-grid strong,
+:root[data-theme="dark"] .domain-result-row > span,
+:root[data-theme="dark"] .review-item h3,
+:root[data-theme="dark"] dialog h2 {
+  color: #f5f7fa;
+}
+
+:root[data-theme="dark"] .hero-lead,
+:root[data-theme="dark"] .mode-card > span:not(.mode-radio, .mode-icon),
+:root[data-theme="dark"] .option-text,
+:root[data-theme="dark"] .feedback-panel p,
+:root[data-theme="dark"] .review-answer-line,
+:root[data-theme="dark"] .review-explanation {
+  color: #c0c8d4;
+}
+
+:root[data-theme="dark"] .setup-panel {
+  background: rgb(23 34 53 / 94%);
+  border-color: #344054;
+}
+
+:root[data-theme="dark"] .mode-card {
+  background: #111a29;
+  border-color: #344054;
+}
+
+:root[data-theme="dark"] .mode-card:hover {
+  border-color: #64748b;
+}
+
+:root[data-theme="dark"] .mode-card.is-selected {
+  background: linear-gradient(145deg, #1b2639, #231e18);
+  border-color: var(--orange);
+}
+
+:root[data-theme="dark"] .mode-card.is-selected .mode-radio {
+  background: #111a29;
+  border-color: var(--orange);
+}
+
+:root[data-theme="dark"] .mode-radio,
+:root[data-theme="dark"] .domain-picker select,
+:root[data-theme="dark"] .confidence-control select,
+:root[data-theme="dark"] .button-secondary {
+  color: #e8edf5;
+  background: #111a29;
+  border-color: #475467;
+}
+
+:root[data-theme="dark"] .domain-picker {
+  background: #111a29;
+}
+
+:root[data-theme="dark"] .domain-picker label,
+:root[data-theme="dark"] .resume-card strong {
+  color: #e8edf5;
+}
+
+:root[data-theme="dark"] .resume-card {
+  background: #13243b;
+  border-color: #24558a;
+}
+
+:root[data-theme="dark"] .button-secondary:hover {
+  background: #202d42;
+  border-color: #667085;
+}
+
+:root[data-theme="dark"] .question-navigator,
+:root[data-theme="dark"] .question-card,
+:root[data-theme="dark"] .domain-results,
+:root[data-theme="dark"] .result-stat-grid article,
+:root[data-theme="dark"] .review-item {
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] .navigator-heading button,
+:root[data-theme="dark"] .question-grid button {
+  color: #c4ccd8;
+  background: #111a29;
+  border-color: #344054;
+}
+
+:root[data-theme="dark"] .question-grid button.is-answered {
+  color: white;
+  background: #475467;
+  border-color: #667085;
+}
+
+:root[data-theme="dark"] .question-grid button.is-current {
+  color: #101c2c;
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+:root[data-theme="dark"] .answer-option {
+  background: #111a29;
+  border-color: #344054;
+}
+
+:root[data-theme="dark"] .answer-option:hover {
+  border-color: #667085;
+}
+
+:root[data-theme="dark"] .option-letter {
+  color: #cbd3df;
+  background: #1f2b40;
+  border-color: #3f4d63;
+}
+
+:root[data-theme="dark"] .answer-option.is-selected {
+  background: #292217;
+  border-color: var(--orange);
+}
+
+:root[data-theme="dark"] .answer-option.is-correct,
+:root[data-theme="dark"] .feedback-panel {
+  background: #102d24;
+  border-color: #157f58;
+}
+
+:root[data-theme="dark"] .answer-option.is-incorrect,
+:root[data-theme="dark"] .feedback-panel.is-wrong {
+  background: #351918;
+  border-color: #b42318;
+}
+
+:root[data-theme="dark"] .feedback-panel p {
+  color: #d1d8e2;
+}
+
+:root[data-theme="dark"] .review-toggle {
+  color: #c0c8d4;
+}
+
+:root[data-theme="dark"] .score-ring::before {
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] .readiness-banner {
+  background: #172b45;
+}
+
+:root[data-theme="dark"] .confidence-insight {
+  background: #282245;
+  border-color: #51458e;
+}
+
+:root[data-theme="dark"] .insight-icon {
+  background: #17132a;
+}
+
+:root[data-theme="dark"] .confidence-insight strong {
+  color: #d9d6fe;
+}
+
+:root[data-theme="dark"] .confidence-insight p {
+  color: #bdb4fe;
+}
+
+:root[data-theme="dark"] .review-filters {
+  background: #111a29;
+}
+
+:root[data-theme="dark"] .review-filters button.is-active {
+  color: #f5f7fa;
+  background: #26344a;
+}
+
+:root[data-theme="dark"] .review-explanation {
+  background: #111a29;
+}
+
+:root[data-theme="dark"] .review-answer-line strong,
+:root[data-theme="dark"] .domain-result-row strong {
+  color: #e2e8f0;
+}
+
+:root[data-theme="dark"] .domain-bar {
+  background: #273449;
+}
+
+:root[data-theme="dark"] dialog form {
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] dialog p {
+  color: var(--muted);
+}
+
 @media (max-width: 980px) {
   .hero-grid {
     grid-template-columns: 1fr;
@@ -1600,6 +1850,10 @@ dialog p {
   }
 
   .header-status {
+    display: none;
+  }
+
+  .theme-control > span {
     display: none;
   }
 
