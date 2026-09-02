@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An original AWS Certified Developer - Associate DVA-C02 practice exam and learning tool.">
+  <title>DVA-C02 Practice Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101c2c'/%3E%3Cpath d='M15 39h34l-4 8H19z' fill='%23ff9900'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="#" id="brand-home" aria-label="Return to practice lab home">
+        <span class="brand-mark" aria-hidden="true">AWS</span>
+        <span>
+          <strong>DVA-C02</strong>
+          <small>Practice Lab</small>
+        </span>
+      </a>
+      <div class="header-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        Original practice questions
+      </div>
+    </header>
+
+    <main>
+      <section class="view landing-view is-active" id="landing-view">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">AWS Certified Developer - Associate</p>
+            <h1>Learn by taking the exam.</h1>
+            <p class="hero-lead">
+              Start with realistic scenarios, expose the gaps, and learn each AWS concept exactly when you need it.
+            </p>
+            <div class="exam-facts" aria-label="Exam facts">
+              <div>
+                <strong>65</strong>
+                <span>questions</span>
+              </div>
+              <div>
+                <strong>130</strong>
+                <span>minutes</span>
+              </div>
+              <div>
+                <strong>4</strong>
+                <span>domains</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="blueprint-card">
+            <span class="blueprint-icon" aria-hidden="true">01</span>
+            <h2>Built to the DVA-C02 blueprint</h2>
+            <ul>
+              <li><span>32%</span> Development with AWS Services</li>
+              <li><span>26%</span> Security</li>
+              <li><span>24%</span> Deployment</li>
+              <li><span>18%</span> Troubleshooting and Optimization</li>
+            </ul>
+          </aside>
+        </div>
+
+        <section class="setup-panel" aria-labelledby="setup-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Choose your session</p>
+              <h2 id="setup-title">How do you want to train today?</h2>
+            </div>
+            <span class="keyboard-hint">Progress saves automatically</span>
+          </div>
+
+          <div class="mode-grid">
+            <label class="mode-card is-selected">
+              <input type="radio" name="mode" value="timed" checked>
+              <span class="mode-radio" aria-hidden="true"></span>
+              <span class="mode-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="13" r="8"></circle>
+                  <path d="M12 9v4l2.5 1.5M9 2h6M12 5V2"></path>
+                </svg>
+              </span>
+              <strong>Timed exam</strong>
+              <span>65 questions in 130 minutes. Feedback appears after submission.</span>
+              <small>Best for a true baseline</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="practice">
+              <span class="mode-radio" aria-hidden="true"></span>
+              <span class="mode-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 19.5V5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2.5"></path>
+                  <path d="M8 7h6M8 11h7"></path>
+                </svg>
+              </span>
+              <strong>Learning mode</strong>
+              <span>Work by domain and reveal the explanation after each answer.</span>
+              <small>Best for just-in-time learning</small>
+            </label>
+          </div>
+
+          <div class="domain-picker is-hidden" id="domain-picker">
+            <label for="domain-select">Practice domain</label>
+            <select id="domain-select">
+              <option value="all">All domains</option>
+              <option value="Development with AWS Services">Development with AWS Services</option>
+              <option value="Security">Security</option>
+              <option value="Deployment">Deployment</option>
+              <option value="Troubleshooting and Optimization">Troubleshooting and Optimization</option>
+            </select>
+          </div>
+
+          <div class="resume-card is-hidden" id="resume-card">
+            <div>
+              <span class="resume-label">Saved attempt found</span>
+              <strong id="resume-title">Timed exam</strong>
+              <span id="resume-details">0 of 65 answered</span>
+            </div>
+            <div class="resume-actions">
+              <button class="button button-secondary" id="discard-attempt" type="button">Discard</button>
+              <button class="button button-primary" id="resume-attempt" type="button">Resume attempt</button>
+            </div>
+          </div>
+
+          <div class="start-row">
+            <div>
+              <strong id="start-summary">Full diagnostic exam</strong>
+              <span id="start-description">Your explanations remain hidden until you submit.</span>
+            </div>
+            <button class="button button-primary button-large" id="start-exam" type="button">
+              Start timed exam
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+        </section>
+
+        <p class="disclaimer">
+          This independent study tool contains original questions and is not affiliated with or endorsed by Amazon Web Services.
+          Readiness percentages are coaching targets, not an AWS scaled score.
+        </p>
+      </section>
+
+      <section class="view exam-view" id="exam-view" aria-labelledby="question-heading">
+        <div class="exam-toolbar">
+          <div class="exam-identity">
+            <span class="mode-pill" id="mode-pill">Timed exam</span>
+            <strong id="exam-domain-label">All domains</strong>
+          </div>
+
+          <div class="exam-progress-summary">
+            <span id="answered-summary">0 of 65 answered</span>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progress-fill"></span>
+            </div>
+          </div>
+
+          <div class="timer" id="timer" aria-live="polite">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="13" r="8"></circle>
+              <path d="M12 9v4l2.5 1.5M9 2h6M12 5V2"></path>
+            </svg>
+            <span id="timer-value">02:10:00</span>
+          </div>
+
+          <button class="button button-danger-ghost" id="submit-exam" type="button">Submit exam</button>
+        </div>
+
+        <div class="exam-layout">
+          <aside class="question-navigator" aria-label="Question navigator">
+            <div class="navigator-heading">
+              <strong>Questions</strong>
+              <button id="toggle-navigator" type="button" aria-expanded="true" aria-label="Collapse question navigator">&minus;</button>
+            </div>
+            <div class="question-grid" id="question-grid"></div>
+            <div class="navigator-legend">
+              <span><i class="legend-current"></i>Current</span>
+              <span><i class="legend-answered"></i>Answered</span>
+              <span><i class="legend-marked"></i>Review</span>
+            </div>
+          </aside>
+
+          <article class="question-card">
+            <div class="question-meta">
+              <span class="domain-badge" id="question-domain">Domain</span>
+              <span id="question-position">Question 1 of 65</span>
+            </div>
+
+            <h2 id="question-heading">Question</h2>
+            <p class="selection-instruction" id="selection-instruction">Select one answer.</p>
+
+            <fieldset class="answer-options" id="answer-options">
+              <legend class="sr-only">Answer choices</legend>
+            </fieldset>
+
+            <div class="feedback-panel is-hidden" id="feedback-panel" aria-live="polite">
+              <div class="feedback-heading">
+                <span id="feedback-icon" aria-hidden="true"></span>
+                <strong id="feedback-title">Correct</strong>
+              </div>
+              <p id="feedback-explanation"></p>
+              <a id="feedback-reference" href="#" target="_blank" rel="noreferrer">Open AWS reference</a>
+            </div>
+
+            <div class="question-tools">
+              <label class="review-toggle">
+                <input type="checkbox" id="mark-review">
+                <span aria-hidden="true">&#9873;</span>
+                Mark for review
+              </label>
+
+              <label class="confidence-control" for="confidence">
+                Confidence
+                <select id="confidence">
+                  <option value="">Not set</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="question-actions">
+              <button class="button button-secondary" id="previous-question" type="button">
+                <span aria-hidden="true">&larr;</span>
+                Previous
+              </button>
+              <div>
+                <button class="button button-secondary is-hidden" id="check-answer" type="button">Check answer</button>
+                <button class="button button-primary" id="next-question" type="button">
+                  Next
+                  <span aria-hidden="true">&rarr;</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view results-view" id="results-view" aria-labelledby="results-title">
+        <div class="results-hero">
+          <div>
+            <p class="eyebrow">Attempt complete</p>
+            <h1 id="results-title">Your diagnostic result</h1>
+            <p id="results-message">Use this result to choose what to study next.</p>
+          </div>
+          <div class="score-ring" id="score-ring">
+            <div>
+              <strong id="score-percent">0%</strong>
+              <span>raw score</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="readiness-banner" id="readiness-banner">
+          <div>
+            <span class="readiness-label">Coaching assessment</span>
+            <strong id="readiness-title">Foundation building</strong>
+          </div>
+          <p id="readiness-copy"></p>
+        </div>
+
+        <div class="result-stat-grid">
+          <article>
+            <span>Correct</span>
+            <strong id="correct-count">0</strong>
+          </article>
+          <article>
+            <span>Incorrect</span>
+            <strong id="incorrect-count">0</strong>
+          </article>
+          <article>
+            <span>Unanswered</span>
+            <strong id="unanswered-count">0</strong>
+          </article>
+          <article>
+            <span>Time used</span>
+            <strong id="time-used">0m</strong>
+          </article>
+        </div>
+
+        <section class="domain-results" aria-labelledby="domain-results-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Performance by domain</p>
+              <h2 id="domain-results-title">Where to focus next</h2>
+            </div>
+          </div>
+          <div id="domain-breakdown"></div>
+        </section>
+
+        <section class="confidence-insight" id="confidence-insight">
+          <div>
+            <span class="insight-icon" aria-hidden="true">&#9678;</span>
+            <div>
+              <strong>Confidence calibration</strong>
+              <p id="confidence-copy">Set confidence while answering to reveal blind spots.</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="results-actions">
+          <button class="button button-secondary" id="new-attempt" type="button">Start a new attempt</button>
+          <button class="button button-primary" id="review-answers" type="button">Review answers</button>
+        </div>
+
+        <section class="review-section is-hidden" id="review-section" aria-labelledby="review-title">
+          <div class="review-header">
+            <div>
+              <p class="eyebrow">Detailed review</p>
+              <h2 id="review-title">Understand every answer</h2>
+            </div>
+            <div class="review-filters" role="group" aria-label="Filter reviewed questions">
+              <button class="is-active" data-filter="all" type="button">All</button>
+              <button data-filter="incorrect" type="button">Incorrect</button>
+              <button data-filter="marked" type="button">Marked</button>
+            </div>
+          </div>
+          <div class="review-list" id="review-list"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="submit-dialog">
+    <form method="dialog">
+      <span class="dialog-icon" aria-hidden="true">&#10003;</span>
+      <h2>Submit this attempt?</h2>
+      <p id="submit-dialog-copy">You have answered all questions.</p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" value="cancel">Keep working</button>
+        <button class="button button-primary" id="confirm-submit" value="confirm">Submit and score</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
